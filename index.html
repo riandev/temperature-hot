@@ -22,20 +22,46 @@
     <div class="container">
         <form class="col-md-6 m-auto py-5">
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Enter a location for Weather ...">
+                <input id="get-city" type="text" class="form-control" placeholder="Enter a location for Weather ...">
                 <div class="input-group-append">
-                    <button type="button" class="btn btn-danger">Search</button>
+                    <button id="btn" type="button" class="btn btn-danger">Search</button>
                 </div>
             </div>
         </form>
         <div class="weather-status text-white text-center">
-            <img src="https://openweathermap.org/img/wn/02d@2x.png" alt="">
-            <h1>Dhaka</h1>
-            <h3><span>38.06</span>&deg;C</h3>
-            <h1 class="lead">Clouds</h1>
+            <img id="icon" src="" alt="">
+            <h1 id="city">--</h1>
+            <h3><span id="temp">--</span>&deg;C</h3>
+            <h1 id="cloud-status" class="lead">Clouds</h1>
+            <h1 id="timezone"></h1>
+
         </div>
     </div>
-
+    <script>
+        document.getElementById('btn').addEventListener('click', function() {
+            const getCity = document.getElementById('get-city').value;
+            fetch(`https://api.openweathermap.org/data/2.5/weather?q=${getCity}&appid=aaff2a23b67647dd23349423cc985174`)
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                    const temp = data.main.temp;
+                    const tempOutput = temp - 273.15;
+                    console.log(tempOutput);
+                    const icon = data.weather[0];
+                    const iconOutput = icon.icon + '.png'
+                    console.log(iconOutput);
+                    document.getElementById('icon').src = 'https://openweathermap.org/img/wn/' + iconOutput;
+                    document.getElementById('temp').innerText = Math.floor(tempOutput);
+                    document.getElementById('cloud-status').innerText = icon.main;
+                    const country = data.name;
+                    console.log(country);
+                    document.getElementById('city').innerText = country;
+                    const timeZone = data.timezone;
+                    document.getElementById('timezone').innerText = 'Time Zone: ' + timeZone;
+                    console.log(timeZone);
+                })
+        })
+    </script>
 </body>
 
 </html>
